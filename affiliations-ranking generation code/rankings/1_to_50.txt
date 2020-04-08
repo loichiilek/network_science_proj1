@@ -1,0 +1,100 @@
+1
+Massachusetts Institute of Technology (MIT) LogoMassachusetts Institute of Technology (MIT)More United States       
+2
+Stanford University LogoStanford UniversityMore United States       
+3
+Carnegie Mellon University LogoCarnegie Mellon UniversityMore   United States       
+4
+University of California, Berkeley (UCB) LogoUniversity of California, Berkeley (UCB)More   United States       
+5
+University of Oxford LogoUniversity of OxfordMore   United Kingdom      
+6
+University of Cambridge LogoUniversity of CambridgeMore United Kingdom      
+7
+Harvard University LogoHarvard UniversityMore   United States       
+8
+EPFL LogoEPFLMore   Switzerland     
+9
+ETH Zurich - Swiss Federal Institute of Technology LogoETH Zurich - Swiss Federal Institute of TechnologyMore   Switzerland     
+10
+University of Toronto LogoUniversity of TorontoMore Canada      
+11
+Princeton University LogoPrinceton UniversityMore   United States       
+12
+National University of Singapore (NUS) LogoNational University of Singapore (NUS)More   Singapore       
+13
+Tsinghua University LogoTsinghua UniversityMore China (Mainland)        
+14
+Imperial College London LogoImperial College LondonMore United Kingdom      
+15
+University of California, Los Angeles (UCLA) LogoUniversity of California, Los Angeles (UCLA)More   United States       
+16
+Nanyang Technological University, Singapore (NTU) LogoNanyang Technological University, Singapore (NTU)More Singapore       
+17
+UCL LogoUCLMore United Kingdom      
+18
+University of Washington LogoUniversity of WashingtonMore   United States       
+=19
+Columbia University LogoColumbia UniversityMore United States       
+=19
+Cornell University LogoCornell UniversityMore   United States       
+=19
+New York University (NYU) LogoNew York University (NYU)More United States       
+=19
+Peking University LogoPeking UniversityMore China (Mainland)        
+23
+The University of Edinburgh LogoThe University of EdinburghMore United Kingdom      
+24
+University of Waterloo LogoUniversity of WaterlooMore   Canada      
+25
+University of British Columbia LogoUniversity of British ColumbiaMore   Canada      
+26
+The Hong Kong University of Science and Technology LogoThe Hong Kong University of Science and TechnologyMore   Hong Kong SAR       
+27
+Georgia Institute of Technology LogoGeorgia Institute of TechnologyMore United States       
+28
+The University of Tokyo LogoThe University of TokyoMore Japan       
+29
+California Institute of Technology (Caltech) LogoCalifornia Institute of Technology (Caltech)More   United States       
+30
+The Chinese University of Hong Kong (CUHK) LogoThe Chinese University of Hong Kong (CUHK)More   Hong Kong SAR       
+31
+University of Texas at Austin LogoUniversity of Texas at AustinMore United States       
+32
+The University of Melbourne LogoThe University of MelbourneMore Australia       
+33
+University of Illinois at Urbana-Champaign LogoUniversity of Illinois at Urbana-ChampaignMore   United States       
+34
+Shanghai Jiao Tong University LogoShanghai Jiao Tong UniversityMore China (Mainland)        
+35
+University of Pennsylvania LogoUniversity of PennsylvaniaMore   United States       
+=36
+KAIST - Korea Advanced Institute of Science & Technology LogoKAIST - Korea Advanced Institute of Science & TechnologyMore   South Korea     
+=36
+Technical University of Munich LogoTechnical University of MunichMore   Germany     
+38
+The University of Hong Kong LogoThe University of Hong KongMore Hong Kong SAR       
+39
+Université PSL LogoUniversité PSLMore   France      
+40
+Politecnico di Milano LogoPolitecnico di MilanoMore Italy       
+41
+The Australian National University LogoThe Australian National UniversityMore   Australia       
+42
+The University of Sydney LogoThe University of SydneyMore   Australia       
+43
+KTH Royal Institute of Technology LogoKTH Royal Institute of TechnologyMore Sweden      
+44
+University of Southern California LogoUniversity of Southern CaliforniaMore United States       
+45
+University of Amsterdam LogoUniversity of AmsterdamMore Netherlands     
+46
+Yale University LogoYale UniversityMore United States       
+47
+University of Chicago LogoUniversity of ChicagoMore United States       
+=48
+Seoul National University LogoSeoul National UniversityMore South Korea     
+=48
+University of Michigan-Ann Arbor LogoUniversity of Michigan-Ann ArborMore   United States       
+50
+University of Maryland, College Park LogoUniversity of Maryland, College ParkMore   United States
