@@ -1,0 +1,12 @@
+sigmod,1
+vldb,1
+kdd,1
+edbt,2
+icde,2
+icdm,2
+sdm,2
+cikm,2
+dasfaa,3
+pakdd,3
+pkdd,3
+dexa,3
