@@ -121,6 +121,7 @@ class PublicationsAPI:
 
   def add_conf_to_csv(self, conf):
 
+    
       authors_list = []
       query_string = self.query_string_builder(conf)
       h = 1000
@@ -129,8 +130,7 @@ class PublicationsAPI:
       for i in range(int(self.num_hits_in_conf(conf) / 1000) + 1):
           print(conf, f)
           # Send request
-          json_data = json.loads(self.send_request(
-              query_string, h, f).decode('utf-8'))
+          json_data = json.loads(self.send_request(query_string, h, f).decode('utf-8'))
 
           # Iterate through each publication
           for publication in json_data['result']['hits']['hit']:
@@ -144,21 +144,27 @@ class PublicationsAPI:
               # Check if object is a list, they do not hold list of length 1 hence the extra check.
               if type(authors) is list:
                   for author in authors:
-                      self.add_entry_to_list(
-                          authors_list, author['@pid'], author['text'], year, conf)
+                      self.add_entry_to_list(authors_list, author['@pid'], author['text'], year, conf)
               else:
-                  self.add_entry_to_list(
-                      authors_list, authors['@pid'], authors['text'], year, conf)
+                  self.add_entry_to_list(authors_list, authors['@pid'], authors['text'], year, conf)
 
-          # Append CSV
-          with open('authors.csv', 'a', encoding='utf8', newline='') as output_file:
-              if not os.path.isfile('filename.txt'):
-                  fc = csv.DictWriter(output_file, fieldnames=authors_list[0].keys())
-                  fc.writeheader()
-              fc.writerows(authors_list)
+
 
           # Increase f
           f += 1000
+
+      # Check file exists
+      file_exists = True
+      if not os.path.isfile('authors.csv'):
+          file_exists = False
+      # Append CSV
+      with open('authors.csv', 'a', encoding='utf8', newline='') as output_file:
+          fc = csv.DictWriter(output_file, fieldnames=authors_list[0].keys())
+
+          if not file_exists:
+              fc.writeheader()
+
+          fc.writerows(authors_list)
 
 
   def create_csv(self, conf_list):

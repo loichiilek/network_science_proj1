@@ -93,17 +93,23 @@ def add_conf_to_csv(conf):
             else:
                 add_entry_to_list(authors_list, authors['@pid'], authors['text'], year, conf)
 
-        # Append CSV
-        with open('authors.csv', 'a', encoding='utf8', newline='') as output_file:
-            fc = csv.DictWriter(output_file, fieldnames=authors_list[0].keys())
 
-            if not os.path.isfile('authors.csv'):
-                fc.writeheader()
-                
-            fc.writerows(authors_list)
 
         # Increase f
         f += 1000
+
+    # Check file exists
+    file_exists = True
+    if not os.path.isfile('authors.csv'):
+        file_exists = False
+    # Append CSV
+    with open('authors.csv', 'a', encoding='utf8', newline='') as output_file:
+        fc = csv.DictWriter(output_file, fieldnames=authors_list[0].keys())
+
+        if not file_exists:
+            fc.writeheader()
+
+        fc.writerows(authors_list)
 
 def create_csv(conf_list):
     beginning = time.time()
