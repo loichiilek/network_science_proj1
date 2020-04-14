@@ -3,6 +3,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 import json
 import csv
 import time
+import os
 
 # To grab the xml for different convention and organize the information 
 
@@ -14,6 +15,7 @@ import time
 
 BASE_URL = "https://dblp.uni-trier.de/search/publ/api"
 
+# Can be replaced with a config/text file or whatnot
 CONF_LIST = [
     "sigmod",
     "vldb",
@@ -94,7 +96,10 @@ def add_conf_to_csv(conf):
         # Append CSV
         with open('authors.csv', 'a', encoding='utf8', newline='') as output_file:
             fc = csv.DictWriter(output_file, fieldnames=authors_list[0].keys())
-            fc.writeheader()
+
+            if not os.path.isfile('authors.csv'):
+                fc.writeheader()
+                
             fc.writerows(authors_list)
 
         # Increase f

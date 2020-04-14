@@ -7,6 +7,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 import networkx as nx
 import pandas as pd
 import matplotlib.pyplot as plt
+import os
 
 class Network:
 
@@ -151,8 +152,9 @@ class PublicationsAPI:
 
           # Append CSV
           with open('authors.csv', 'a', encoding='utf8', newline='') as output_file:
-              fc = csv.DictWriter(output_file, fieldnames=authors_list[0].keys())
-              fc.writeheader()
+              if not os.path.isfile('filename.txt'):
+                  fc = csv.DictWriter(output_file, fieldnames=authors_list[0].keys())
+                  fc.writeheader()
               fc.writerows(authors_list)
 
           # Increase f
