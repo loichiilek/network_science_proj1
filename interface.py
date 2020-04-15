@@ -6,7 +6,7 @@ import sys
 import time
 
 from preprocessing import Network
-
+from science import Science
 
 class App(QMainWindow):
     def __init__(self):
@@ -21,7 +21,9 @@ class App(QMainWindow):
         # self.setGeometry(self.left, self.top, self.width, self.height)
 
         # model class initialization
-        self.network = Network()
+        # self.network = Network()
+        self.check_state = []
+        self.science = Science()
 
 
         # initialize the Tabs
@@ -81,17 +83,19 @@ class App(QMainWindow):
 
         # Create conferences Checkboxes
         self.input_groupbox1 = QGroupBox("Conferences to Include")
+
         self.input_widget_layout.addWidget(self.input_groupbox1)
 
         self.input_grid_layout = QGridLayout()
         self.input_groupbox1.setLayout(self.input_grid_layout)
 
-      #  # Add Conferences Button
-      #   self.add_conf_button = QPushButton("Add Conf")
-      #   self.add_conf_button.clicked.connect(self.addConfOnClicked)
+        #  # Add Conferences Button
+        #   self.add_conf_button = QPushButton("Add Conf")
+        #   self.add_conf_button.clicked.connect(self.addConfOnClicked)
 
         self.updateCheckboxes()
-
+        
+        self.checkAllCheckboxes()
         # self.input_grid_layout.addWidget(self.add_conf_button,len(self.conf_check_box)+1,0,1,2)
 
 
@@ -101,7 +105,7 @@ class App(QMainWindow):
         self.input_qn_box_layout = QVBoxLayout()
         self.input_groupbox2.setLayout(self.input_qn_box_layout)
 
-        qn_list = self.network.getQuestions()
+        qn_list = self.science.network.getQuestions()
         self.input_qn_combo = QComboBox()
         for j, qn in enumerate(qn_list):
             self.input_qn_combo.addItem(qn)
@@ -121,7 +125,7 @@ class App(QMainWindow):
       
 
     def updateCheckboxes(self):
-        conf_list = self.network.getConferences()
+        conf_list = self.science.network.getConferences()
         self.conf_check_box = [i for i in range(len(conf_list))]
         self.conf_label = [i for i in range(len(conf_list))]
 
@@ -132,33 +136,50 @@ class App(QMainWindow):
         for i, conf in enumerate(conf_list):
             self.conf_check_box[i] = QCheckBox(conf[0].upper())
             self.conf_label[i] = QLabel('Tier ' + str(conf[1]))
+
+            # set checked or unchecked based on check_state
+            if conf in [c[0] for c in self.check_state]:
+                self.conf_check_box[i].setChecked([c[1] for c in self.check_state if c[0]==conf][0])
+
             self.input_grid_layout.addWidget(self.conf_check_box[i], i + 1, 0)
             self.input_grid_layout.addWidget(self.conf_label[i], i + 1, 1)
 
+        # if hasattr(self,"check_state"):
+        #     for i in range(len(self.check_state)):
+        #         if self.check_state[i][0]
+        #         self.conf_check_box[i].setChecked(
+        #             self.conf_check_box[i].isChecked())
+
         # update add conf button that gets deleted
-        self.add_conf_button = QPushButton("Add Conf")
+        self.add_conf_button = QPushButton("Add New Conf")
         self.add_conf_button.clicked.connect(self.addConfOnClicked)
         self.input_grid_layout.addWidget(self.add_conf_button, len(self.conf_check_box) + 1, 0, 1, 2)
         
         # update remove conf button that gets deleted
-        self.remove_conf_button = QPushButton("Remove Conf")
+        self.remove_conf_button = QPushButton("Remove Existing Conf")
         self.remove_conf_button.clicked.connect(self.removeConfOnClicked)
-        self.input_grid_layout.addWidget(self.remove_conf_button, len(self.conf_check_box)+2, 0, 1, 2)
+        self.input_grid_layout.addWidget(self.remove_conf_button, len(self.conf_check_box) + 2, 0, 1, 2)
 
 
-    def runOnClicked(self):
-        checked = [ind for ind, cb in enumerate(self.conf_check_box) if cb.isChecked() ]      
-        print(checked)
-        print([self.network.getConferences()[i] for i in checked])
-        conf_list = [self.network.getConferences()[i][0] for i in checked]
-        self.tab_widget.setCurrentIndex(1)
-        time.sleep(1)
-        self.network.getPublications(conf_list)
+    def checkAllCheckboxes(self):
+        for cb in self.conf_check_box:
+            cb.setChecked(True)
+
+
+    def uncheckAllCheckboxes(self):
+        for cb in self.conf_check_box:
+            cb.setChecked(False)
+
+
+    def rememberCheckState(self):
+        conf_list = self.science.network.getConferences()
+        self.check_state = [i for i in range(len(self.conf_check_box))]
+        for i in range(len(self.conf_check_box)):
+            self.check_state[i] = (conf_list[i],self.conf_check_box[i].isChecked())
+
     
-
     def addConfOnClicked(self,to_add):
         self.createConfDialogue()
-
 
     def removeConfOnClicked(self, to_rem):
         self.removeConfDialogue()
@@ -181,10 +202,10 @@ class App(QMainWindow):
 
         def confOnConfirm():
             # write to conference file
-            print()
-            self.network.addConference(
+            self.science.network.addConference(
                 [self.name_line_edit.text(), self.tier_line_edit.text()])
             self.dial_widget.close()
+            self.rememberCheckState()
             self.updateCheckboxes()
 
         def confOnClose():
@@ -206,6 +227,7 @@ class App(QMainWindow):
         self.dial_widget.show()
 
 
+
     def removeConfDialogue(self):
         self.rem_widget = QWidget()
         self.rem_widget.setWindowFlags(Qt.Window | Qt.Popup)
@@ -219,7 +241,8 @@ class App(QMainWindow):
         self.close_remove_button = QPushButton('Cancel')
 
         def remOnConfirm():
-            self.network.removeConference(self.remove_line_edit.text())
+            self.rememberCheckState()
+            self.science.network.removeConference(self.remove_line_edit.text())
             self.rem_widget.close()
             self.updateCheckboxes()
 
@@ -237,8 +260,30 @@ class App(QMainWindow):
 
         self.rem_widget.setLayout(rem_layout)
         self.rem_widget.show()
-
       
+
+    def runOnClicked(self):
+        checked = [ind for ind, cb in enumerate(self.conf_check_box) if cb.isChecked()]
+        # print(checked)
+        # print([self.science.network.getConferences()[i] for i in checked])
+        conf_list_names = [self.science.network.getConferences()[i][0] for i in checked]
+        conf_list = [self.science.network.getConferences()[i] for i in checked]
+        self.science.network.getPublications(conf_list_names)
+                      
+        question = self.input_qn_combo.currentIndex()
+
+        if question == 0:
+            self.science.question1(conf_list)
+        if question == 1:
+            self.science.question2(conf_list)
+        if question == 2:
+            self.science.question3(conf_list)
+        if question == 3:
+            self.science.question4(conf_list)
+
+        # display the PICTURE and TEXT  
+      
+        self.tab_widget.setCurrentIndex(1)
 
 
 def main():
