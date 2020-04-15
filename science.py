@@ -4,6 +4,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import pandas as pd
 import matplotlib
+import numpy as np
 matplotlib.use('agg')
 sns.set()
 
