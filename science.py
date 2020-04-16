@@ -48,46 +48,102 @@ class Science:
         df_tier1 = df_authors[df_authors['conf'].isin(tier1)]
         df_tier1.drop_duplicates(subset ="pid", keep = "first", inplace = True)
         df_tier1_authors_institute_rank = df_institutes[df_institutes['pid'].isin(df_tier1.pid.unique())].drop(['affiliation', 'latitude', "longitude", "Distance to Top Ten"], axis=1)
-        # df_tier1_authors_institute_rank.hist(bins=[0,100,200,300,400,500,600])
 
         # tier2
         df_tier2 = df_authors[df_authors['conf'].isin(tier2)]
         df_tier2.drop_duplicates(subset ="pid", keep = "first", inplace = True)
         df_tier2_authors_institute_rank = df_institutes[df_institutes['pid'].isin(df_tier2.pid.unique())].drop(['affiliation', 'latitude', "longitude", "Distance to Top Ten"], axis=1)
-        # df_tier2_authors_institute_rank.hist(bins=[0,100,200,300,400,500,600])
 
         # tier3
         df_tier3 = df_authors[df_authors['conf'].isin(tier3)]
         df_tier3.drop_duplicates(subset ="pid", keep = "first", inplace = True)
         df_tier3_authors_institute_rank = df_institutes[df_institutes['pid'].isin(df_tier3.pid.unique())].drop(['affiliation', 'latitude', "longitude", "Distance to Top Ten"], axis=1)
-        # df_tier3_authors_institute_rank.hist(bins=[0,100,200,300,400,500,600], alpha=0.5)
 
         fig, ax = plt.subplots()
 
-        # plt.hist(data, bins=6, range=[0, 600], histtype='step')
+
         a_heights, a_bins = np.histogram(df_tier1_authors_institute_rank['rank'].dropna(), bins=6, range=[0, 600])
         b_heights, b_bins = np.histogram(df_tier2_authors_institute_rank['rank'].dropna(), bins=6, range=[0, 600])
         c_heights, c_bins = np.histogram(df_tier3_authors_institute_rank['rank'].dropna(), bins=6, range=[0, 600])
 
+        
+        a_percent = [i/sum(a_heights)*100 for i in a_heights]
+        b_percent = [i/sum(b_heights)*100 for i in b_heights]
+        c_percent = [i/sum(c_heights)*100 for i in c_heights]
         width = (a_bins[1] - a_bins[0])/3
 
-        print(a_bins)
-        ax.set_title('Institution Rank Frequency for Different Tiers of Publication')
+        ax.set_title('Institution Rank vs Percentage of Unique Authors in Different Tiers of Publication')
         ax.set_xlabel('Institution Rank (bin_width = 100)')
-        ax.set_ylabel('Frequency')
-        ax.bar(a_bins[:-1], a_heights, width=width, align='edge', label='Tier 1 venues')
-        ax.bar(b_bins[:-1]+width, b_heights, width=width, align='edge', label='Tier 2 venues')
-        ax.bar(c_bins[:-1]+2*width, c_heights, width=width, align='edge', label='Tier 3 venues')
+        ax.set_ylabel('Percentage of Unique Authors')
+        ax.bar(a_bins[:-1], a_percent, width=width, align='edge', label='Tier 1 venues')
+        ax.bar(b_bins[:-1]+width, b_percent, width=width, align='edge', label='Tier 2 venues')
+        ax.bar(c_bins[:-1]+2*width, c_percent, width=width, align='edge', label='Tier 3 venues')
         ax.legend()
         
         ax.set_xticks(a_bins)
-        plt.savefig('q3_image.png')
+        plt.savefig('q3a_image.png')
 
         return "This is the analysis of this particular graph. I cannot tell."
 
     def question3b(self, conferences):
-        # I have two parts, still doing second half.
-        pass
+        # Get the tier lists
+        tier1 = []
+        tier2 = []
+        tier3 = []
+
+        for conference in conferences:
+            if conference[1] == '1':
+                tier1.append(conference[0])
+
+            elif conference[1] == '3':
+                tier2.append(conference[0])
+            else:
+                tier3.append(conference[0])
+
+
+        df_authors = pd.read_csv("authors.csv")
+        df_institutes = pd.read_csv("author_aff_rank_distance.csv").drop(['affiliation', 'latitude', "longitude", "Distance to Top Ten"], axis=1)
+
+        # tier1
+        df_tier1 = df_authors[df_authors['conf'].isin(tier1)]
+        df_tier1_num_pub = df_tier1.groupby(['pid']).size().reset_index(name='num_publications')
+        df_tier1_publications_institute_rank = pd.merge(df_tier1_num_pub, df_institutes, left_on='pid', right_on='pid', how='left')
+
+        # tier2
+        df_tier2 = df_authors[df_authors['conf'].isin(tier2)]
+        df_tier2_num_pub = df_tier2.groupby(['pid']).size().reset_index(name='num_publications')
+        df_tier2_publications_institute_rank = pd.merge(df_tier2_num_pub, df_institutes, left_on='pid', right_on='pid', how='left')
+        
+        # tier3
+        df_tier3 = df_authors[df_authors['conf'].isin(tier3)]
+        df_tier3_num_pub = df_tier3.groupby(['pid']).size().reset_index(name='num_publications')
+        df_tier3_publications_institute_rank = pd.merge(df_tier3_num_pub, df_institutes, left_on='pid', right_on='pid', how='left')
+
+
+        fig, ax = plt.subplots()
+
+        a_heights, a_bins = np.histogram(df_tier1_publications_institute_rank['rank'].dropna(), bins=6, range=[0, 600])
+        b_heights, b_bins = np.histogram(df_tier2_publications_institute_rank['rank'].dropna(), bins=6, range=[0, 600])
+        c_heights, c_bins = np.histogram(df_tier3_publications_institute_rank['rank'].dropna(), bins=6, range=[0, 600])
+
+        a_percent = [i/sum(a_heights)*100 for i in a_heights]
+        b_percent = [i/sum(b_heights)*100 for i in b_heights]
+        c_percent = [i/sum(c_heights)*100 for i in c_heights]
+        width = (a_bins[1] - a_bins[0])/3
+
+
+        ax.set_title('Institution Rank vs Percentage of Publications in Different Tiers of Publication')
+        ax.set_xlabel('Institution Rank (bin_width = 100)')
+        ax.set_ylabel('Percentage of Publications')
+        ax.bar(a_bins[:-1], a_percent, width=width, align='edge', label='Tier 1 venues')
+        ax.bar(b_bins[:-1]+width, b_percent, width=width, align='edge', label='Tier 2 venues')
+        ax.bar(c_bins[:-1]+2*width, c_percent, width=width, align='edge', label='Tier 3 venues')
+        ax.legend()
+        
+        ax.set_xticks(a_bins)
+        plt.savefig('q3b_image.png')
+
+
 
     def question4(self, conferences):
         # Reputation of Venues vs Career of Scientist
