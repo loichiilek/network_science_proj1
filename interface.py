@@ -30,12 +30,12 @@ class App(QMainWindow):
 
         # initialize the Tabs
         self.createInputWidget()
-        self.createGraphWidget()
+        self.createAnalysisWidget()
         self.tab_widget = QTabWidget(self)
 
         # Add Tabs
-        self.tab_widget.addTab(self.inputWidget, "Input")
-        self.tab_widget.addTab(self.graphWidget, "Analysis")
+        self.tab_widget.addTab(self.input_widget, "Input")
+        self.tab_widget.addTab(self.analysis_widget, "Analysis")
 
         # set Grid
         # layout = QGridLayout()
@@ -45,41 +45,18 @@ class App(QMainWindow):
 
         self.show()
 
-    def createGraphWidget(self):
-        # self.graphWidget = pg.PlotWidget()
-        # # self.setCentralWidget(self.graphWidget)
+    def createAnalysisWidget(self):
 
-        # hour = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        # temperature = [30, 32, 34, 32, 33, 31, 29, 32, 35, 45]
-
-        # # Add Background colour to white
-        # self.graphWidget.setBackground('w')
-        # # Add Title
-        # self.graphWidget.setTitle("Your Title Here")
-        # # Add Axis Labels
-        # self.graphWidget.setLabel(
-        #     'left', 'Temperature (°C)', color='red', size=30)
-        # self.graphWidget.setLabel('bottom', 'Hour (H)', color='red', size=30)
-        # # Add legend
-        # self.graphWidget.addLegend()
-        # # Add grid
-        # self.graphWidget.showGrid(x=True, y=True)
-        # # Set Range
-        # self.graphWidget.setXRange(0, 10, padding=0)
-        # self.graphWidget.setYRange(20, 55, padding=0)
-
-        # pen = pg.mkPen(color=(255, 0, 0))
-        # self.graphWidget.plot(hour, temperature, name="Sensor 1",
-        #                       pen=pen, symbol='+', symbolSize=30, symbolBrush=('b'))
         self.graph_widget_layout = QVBoxLayout()
         self.graph_pic_label = QLabel()
+        self.graph_pic_label.setScaledContents(True)
         self.graph_text_label = QLabel()
         self.graph_text_label.setWordWrap(True)
         self.graph_widget_layout.addWidget(self.graph_pic_label)
         self.graph_widget_layout.addWidget(self.graph_text_label)
        # create dummy widget to put into Tab widget
-        self.graphWidget = QWidget()
-        self.graphWidget.setLayout(self.graph_widget_layout)
+        self.analysis_widget = QWidget()
+        self.analysis_widget.setLayout(self.graph_widget_layout)
 
     def createInputWidget(self):
         self.input_widget_layout = QHBoxLayout()
@@ -105,7 +82,7 @@ class App(QMainWindow):
 
         self.updateCheckboxes()
 
-        self.checkAllCheckboxes()
+        # self.checkAllCheckboxes()
         # self.input_grid_layout.addWidget(self.add_conf_button,len(self.conf_check_box)+1,0,1,2)
 
         # Create questions dropdown list
@@ -129,17 +106,21 @@ class App(QMainWindow):
             self.run_button, alignment=Qt.AlignBottom)
 
         # create dummy widget to put into Tab widget
-        self.inputWidget = QWidget()
-        self.inputWidget.setLayout(self.input_widget_layout)
+        self.input_widget = QWidget()
+        self.input_widget.setLayout(self.input_widget_layout)
 
     def updateCheckboxes(self):
         conf_list = self.science.network.getConferences()
         self.conf_check_box = [i for i in range(len(conf_list))]
         self.conf_label = [i for i in range(len(conf_list))]
-
         # reset layout so that the new checklists can be shown
         for i in reversed(range(self.input_grid_layout.count())):
             self.input_grid_layout.itemAt(i).widget().deleteLater()
+
+        self.toggle_checkbox  = QCheckBox('Toggle')
+        self.toggle_checkbox.clicked.connect(self.toggleCheckbox)
+        self.input_grid_layout.addWidget(self.toggle_checkbox, 0, 0)
+
 
         for i, conf in enumerate(conf_list):
             self.conf_check_box[i] = QCheckBox(conf[0].upper())
@@ -153,11 +134,6 @@ class App(QMainWindow):
             self.input_grid_layout.addWidget(self.conf_check_box[i], i + 1, 0)
             self.input_grid_layout.addWidget(self.conf_label[i], i + 1, 1)
 
-        # if hasattr(self,"check_state"):
-        #     for i in range(len(self.check_state)):
-        #         if self.check_state[i][0]
-        #         self.conf_check_box[i].setChecked(
-        #             self.conf_check_box[i].isChecked())
 
         # update add conf button that gets deleted
         self.add_conf_button = QPushButton("Add New Conf")
@@ -178,6 +154,13 @@ class App(QMainWindow):
     def uncheckAllCheckboxes(self):
         for cb in self.conf_check_box:
             cb.setChecked(False)
+
+    def toggleCheckbox(self):
+        if self.toggle_checkbox.isChecked():
+            self.checkAllCheckboxes()
+        else:
+            self.uncheckAllCheckboxes()
+
 
     def rememberCheckState(self):
         conf_list = self.science.network.getConferences()
@@ -276,6 +259,7 @@ class App(QMainWindow):
                                     for i in checked]
         # code to make sure won't rerun all the time
         if self.conf_to_analyze_new != self.conf_to_analyze_old:
+            print("conference list changed, getting conferences from DBLP....")
             self.science.network.getPublications(self.conf_to_analyze_new)
         self.conf_to_analyze_old = self.conf_to_analyze_new
 
@@ -288,23 +272,25 @@ class App(QMainWindow):
         if question == 1:
             text_result = self.science.question2(conf_list)
             pic_result = 'q2_image.png'
-            print(text_result)
         if question == 2:
             text_result = self.science.question3a(conf_list)
-            pic_result = 'q3_image.png'
-            print(text_result)
+            pic_result = 'q3a_image.png'
         if question == 3:
+            text_result = self.science.question3b(conf_list)
+            pic_result = 'q3b_image.png'
+        if question == 4:
             text_result = self.science.question4(conf_list)
             pic_result = 'q4_image.png'
-        self.createAnalysis(pic_result, text_result)
-        # display the PICTURE and TEXT
 
+        # display the PICTURE and TEXT
+        self.createAnalysis(pic_result, text_result)
+        # change to the analysis tab
         self.tab_widget.setCurrentIndex(1)
 
     def createAnalysis(self, pic, text):
         pixmap = QPixmap(pic)
-        pixmap_resized = pixmap.scaled(600, 400, Qt.KeepAspectRatio)
-        self.graph_pic_label.setPixmap(pixmap_resized)
+        # pixmap_resized = pixmap.scaled(600, 400, Qt.KeepAspectRatio)
+        self.graph_pic_label.setPixmap(pixmap)
         self.graph_text_label.setText(text)
 
 
