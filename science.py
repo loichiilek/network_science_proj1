@@ -83,7 +83,7 @@ class Science:
         ax.set_xticks(a_bins)
         plt.savefig('q3a_image.png')
 
-        return "This is the analysis of this particular graph. I cannot tell."
+        return "This graph shows the spread of the unique authors across different instition ranks for different tiers of venues."
 
     def question3b(self, conferences):
         # Get the tier lists
@@ -143,7 +143,7 @@ class Science:
         ax.set_xticks(a_bins)
         plt.savefig('q3b_image.png')
 
-
+        return "This graph shows the spread of the publications across different instition ranks for different tiers of venues."
 
     def question4(self, conferences):
         # Reputation of Venues vs Career of Scientist
