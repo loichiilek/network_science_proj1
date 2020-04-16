@@ -27,9 +27,69 @@ class Science:
         d = {'conference': conference, 'eigenvector_centrality': eigenvector_centrality}
         df =  pd.DataFrame.from_dict(d)
         df = df.sort_values('eigenvector_centrality', ascending = False)
-        ax = sns.barplot(x="eigenvector_centrality", y="conference", data=df, palette="Blues_d" )
         
-        pass
+        
+        
+        # Barplot
+        sns_plot = sns.barplot(x="eigenvector_centrality", y="conference", data=df2, palette="Blues_d")
+        sns_plot.set(ylabel='Conference', xlabel='Eigenvector Centrality')
+        sns_plot.get_figure().savefig('q1_image.png')
+        
+        tier = [0,0,0]
+
+        for i in conferences:
+            if i[1] == '1':
+                tier[0] += 1
+            elif i[1] == '2':
+                tier[1] += 1
+            else:
+                tier[2] += 1
+
+        count = 0
+        newtierlist = []
+
+        current_palette = sns.color_palette()        
+        sns_plot = sns.barplot(x="eigenvector_centrality", y="conference", data=df2)
+        sns_plot.set(ylabel='Conference', xlabel='Eigenvector Centrality')
+        for bar in sns_plot.patches:
+            if count < tier[0]:
+                bar.set_color(current_palette[0])
+                count += 1
+            elif count < tier[0]+tier[1]:
+                bar.set_color(current_palette[1])
+                count += 1
+            else:
+                bar.set_color(current_palette[2])
+
+        sns_plot.get_figure().savefig('q1_image.png')
+        
+        # extra analysis: accuracy of new tierlist
+        count2 = 0
+        newtierlist = {}
+        for i in range(len(df.index)):
+            if count2 < tier[0]:
+                newtierlist[df['conference'].iloc[i]] = '1'
+                count2 += 1
+            elif count < tier[0]+tier[1]:
+                newtierlist[df['conference'].iloc[i]] = '2'
+                count2 += 1
+            else:
+                newtierlist[df['conference'].iloc[i]] = '3'
+
+        tldict = {}
+        for i in conferences:
+            tldict[i[0]] = i[1]
+            
+        sum = 0
+        for key,value in tldict.items():
+            if newtierlist[key] == value:
+                sum += 1
+        
+        accuracy = str(round(sum/len(newtierlist)*100, 2))
+        
+        string = "Using eigenvector centrality, the network graph has a" + accuracy + "as compared to the given tierlist."
+        
+        return string
 
     def question2(self, conferences):
         # Location of Scientist's Institute vs Success of Scientist
@@ -231,4 +291,40 @@ class Science:
     def question4(self, conferences):
         # Reputation of Venues vs Career of Scientist
         # conferences comes in the form of [['sigmod','1'],...]
-        pass
+        
+        df = self.network.get_authors_rep()
+        low = np.quantile(df['initial'].tolist(),0.3)
+        high = np.quantile(df['initial'].tolist(),0.7)
+        
+        maintainhigh = 0
+        maintainlow = 0
+        uprep = 0
+        downrep = 0
+
+        for i in range(len(df)):
+            if df['initial'].iloc[i] < low and df['final'].iloc[i] < low:
+                maintainlow+=1
+            elif df['initial'].iloc[i] < low and df['final'].iloc[i] > high:
+                uprep+=1
+            elif df['initial'].iloc[i] > high and df['final'].iloc[i] > high:
+                maintainhigh+=1
+            elif df['initial'].iloc[i] > high and df['final'].iloc[i] < low:
+                downrep+=1
+        
+        initial_low = np.sum(df['initial'] < low)
+        initial_high = np.sum(df['initial'] > high)
+        
+        df['Authors'] = ''
+        
+        sns_plot = sns.scatterplot(x="initial", y="final",size= 'Authors', data=df)
+        sns_plot.set(ylabel='Final Reputation', xlabel='Initial Reputation')
+        sns_plot.get_figure().savefig('q4_image.png')
+        
+        rep_remain_high = str(round(maintainhigh/initial_high*100, 2))
+        rep_remain_low = str(round(maintainlow/initial_low*100, 2))
+        rep_down = str(round(downrep/initial_high*100, 2))
+        rep_up = str(round(uprep/initial_low*100, 2))
+        
+        result = "Of the data scientists who had an initial high reputation, " + rep_remain_high + "% continued to have a high reputation while " + rep_down + "% ended up publishing in low-tier conferences. On the other hand, of the data scientists who had an initial low reputation, " + rep_remain_low + "% did not have much of a change in their reputation while " + rep_up + "% managed to publish in high-tiered conferences."
+        
+        return result

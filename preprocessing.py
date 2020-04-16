@@ -92,13 +92,34 @@ class Network:
         prestige = nx.eigenvector_centrality(self.network_graph, weight= 'weight')
         
         return prestige
-                                
-    
+                
+  
     def getPublications(self,conf_list):
         print('getting publications')
         self.publications_api.create_csv(conf_list)
+  
+    def get_authors_rep(self):
+        conf = pd.read_csv ('authors.csv')
+        uniquepid = conf['pid'].unique()
 
- 
+        reppid = []
+        for i in range(len(uniquepid)):
+            if len(conf2[conf2.pid == uniquepid[i]]) >= 10:
+                reppid.append(uniquepid[i])
+        
+        rep = []
+        for i in range(len(reppid)):
+            tempconf = conf2[conf2.pid == reppid[i]]
+            first = 0
+            last = 0
+            for i in range(5):
+                first += prestige[tempconf.iloc[i].conf]
+                last += prestige[tempconf.iloc[i-5].conf]
+            rep.append([ first/5, last/5])
+        
+        df2 = pd.DataFrame(rep, columns = ["initial", "final"])
+        
+        return df2
 
 class PublicationsAPI:
      ### Fetch the authors.csv which contains all the publications in the listed conferences
