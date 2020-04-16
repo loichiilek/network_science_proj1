@@ -105,7 +105,12 @@ class Science:
                 tier_1.append(conf)
 
         # get df with each conference and its network centrality score
-        conf_df = self.get_conf_prestige()
+        conf_dict = self.network.getVenuePrestigefromNetwork()
+        # conf_df = pd.DataFrame.from_dict(conf_dict, orient='index', columns=['conference', 'prestige'])
+        conf_list = []
+        for key, value in conf_dict.items():
+            conf_list.append([key, value])
+        conf_df = pd.DataFrame(conf_list, columns=['conference', 'prestige'])
 
         # create df that will be used to count how many authors have published to tier 1 conferences
         tier1_authors_df = authors_df[authors_df.conf.isin(tier_1)].drop(columns=['name', 'year', 'conf']).drop_duplicates()
@@ -257,18 +262,25 @@ class Science:
         b_heights, b_bins = np.histogram(df_tier2_publications_institute_rank['rank'].dropna(), bins=6, range=[0, 600])
         c_heights, c_bins = np.histogram(df_tier3_publications_institute_rank['rank'].dropna(), bins=6, range=[0, 600])
 
-        a_percent = [i/sum(a_heights)*100 for i in a_heights]
-        b_percent = [i/sum(b_heights)*100 for i in b_heights]
-        c_percent = [i/sum(c_heights)*100 for i in c_heights]
-        width = (a_bins[1] - a_bins[0])/3
+        a_percent = []
+        b_percent = []
+        c_percent = []
+
+        for i in range(len(a_heights)):
+            total_value = a_heights[i] + b_heights[i] + c_heights[i]
+            a_percent.append(a_heights[i]/total_value)
+            b_percent.append(b_heights[i]/total_value)
+            c_percent.append(c_heights[i]/total_value)
+
+        width = 100
 
 
-        ax.set_title('Institution Rank vs Percentage of Publications in Different Tiers of Publication')
+        ax.set_title('Institution Rank vs Number of Publications for Different Tiers of Publication')
         ax.set_xlabel('Institution Rank (bin_width = 100)')
-        ax.set_ylabel('Percentage of Publications')
+        ax.set_ylabel('Percentage of Publications (for each tier)')
         ax.bar(a_bins[:-1], a_percent, width=width, align='edge', label='Tier 1 venues')
-        ax.bar(b_bins[:-1]+width, b_percent, width=width, align='edge', label='Tier 2 venues')
-        ax.bar(c_bins[:-1]+2*width, c_percent, width=width, align='edge', label='Tier 3 venues')
+        ax.bar(b_bins[:-1], b_percent, width=width, align='edge', label='Tier 2 venues', bottom=a_percent)
+        ax.bar(c_bins[:-1], c_percent, width=width, align='edge', label='Tier 3 venues', bottom=[sum(x) for x in zip(a_percent, b_percent)])
         ax.legend()
         
         ax.set_xticks(a_bins)
