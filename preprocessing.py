@@ -17,6 +17,7 @@ class Network:
       "Network Science Measures that Reflect Prestige of Venues/Authors",
       "Location of Scientist's Institute vs Success of Scientist",
       'Correlation of Prestige of Institutes and Authors who Publish in Premium Venues',
+      'Correlation of Prestige of Institutes and Authors who Publish in Premium Venues',
       'Reputation of Venues vs Career of Scientist'
     ]
 
