@@ -33,7 +33,7 @@ class App(QMainWindow):
 
         # Add Tabs
         self.tab_widget.addTab(self.inputWidget, "Input")
-        self.tab_widget.addTab(self.graphWidget, "Graph")
+        self.tab_widget.addTab(self.graphWidget, "Analysis")
 
         # set Grid
         # layout = QGridLayout()
