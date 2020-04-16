@@ -225,7 +225,7 @@ class Science:
         
         plt.clf()
 
-        return "This graph shows the spread of the unique authors across different instition ranks for different tiers of venues."
+        return "This graph shows the percentage of unique authors in each institution ranking bin for the 3 different tiers. The x-axis denotes the bins of the institution rankings with intervals of 100 and the y-axis denotes the percentage of authors that published in this particular ranking bin. In this graph, we aim to investigate if there is a relationship between the number of unique author publishing from each of the ranking bins and the tier of the venue. If there is a higher proportion of authors coming from a certain ranking bins for a particular tier, the relationship we are investigating might exist."
 
     def question3b(self, conferences):
         # Get the tier lists
@@ -293,7 +293,7 @@ class Science:
         
         plt.clf()
 
-        return "This graph shows the spread of the publications across different instition ranks for different tiers of venues."
+        return "This graph shows the percentage of publication from each of the 3 tiers for the different institution rankings. If there is no correlation between the ranking of the institution and the percentage of publication from the different tiers, the graph should show a consistent spread of percentages across the different institution rankings for all 3 tiers. Otherwise, if certain tier has higher proportion in certain institution ranking bin and lower in another, the relationship we are investigating might exist."
 
     def question4(self, conferences):
         # Reputation of Venues vs Career of Scientist
