@@ -31,7 +31,8 @@ class Science:
         
         
         # Barplot
-        sns_plot = sns.barplot(x="eigenvector_centrality", y="conference", data=df2, palette="Blues_d")
+        plt.figure(figsize=(8, 6))
+        sns_plot = sns.barplot(x="eigenvector_centrality", y="conference", data=df, palette="Blues_d")
         sns_plot.set(ylabel='Conference', xlabel='Eigenvector Centrality')
         sns_plot.get_figure().savefig('q1_image.png')
         
@@ -49,7 +50,7 @@ class Science:
         newtierlist = []
 
         current_palette = sns.color_palette()        
-        sns_plot = sns.barplot(x="eigenvector_centrality", y="conference", data=df2)
+        sns_plot = sns.barplot(x="eigenvector_centrality", y="conference", data=df)
         sns_plot.set(ylabel='Conference', xlabel='Eigenvector Centrality')
         for bar in sns_plot.patches:
             if count < tier[0]:
@@ -87,8 +88,9 @@ class Science:
         
         accuracy = str(round(sum/len(newtierlist)*100, 2))
         
-        string = "Using eigenvector centrality, the network graph has a" + accuracy + "as compared to the given tierlist."
+        string = "Using eigenvector centrality, the network graph has an accuracy of " + accuracy + " as compared to the given tierlist."
         
+        plt.clf()
         return string
 
     def question2(self, conferences):
@@ -144,11 +146,12 @@ class Science:
         df.loc[df['Distance to Top Ten'].between(quantile50, quantile75), 'distance_tier'] = 'Q2 to Q3'
         df.loc[df['Distance to Top Ten'] >= quantile75, 'distance_tier'] = 'Q3 to max'
 
+        plt.figure(figsize=(8, 6))
         sns_plot = sns.boxplot(
             y='prestige', x='distance_tier', data=df,
             order=['min to Q1', 'Q1 to Q2', 'Q2 to Q3', 'Q3 to max'],
             showfliers=False)
-        sns_plot.set(ylabel='Prestige Score', xlabel='Distance to Top 10 Institutes - Inter Quartile Range')
+        sns_plot.set(ylabel='Prestige Score', xlabel="Distance to Top 10 Institutes - Inter Quartile Range")
         sns_plot.get_figure().savefig('q2_image.png')
 
         # extra analysis: probability that an author has published to t1 conference before given distance quartile
@@ -157,6 +160,8 @@ class Science:
             t1 = len(df[(df.distance_tier == iqr) & df.published_in_t1.notna()])
             total = len(df[df.distance_tier == iqr])
             prob_published_t1.append(t1 / total)
+        
+        plt.clf()
 
         return f"This graph shows the relationship between the distance of an author's institute to one of the Top Ten institutes, and the author's prestige. The authors are split into 4 buckets based on the distance. The buckets correspond to the quartiles of the distribution of the available distances. Based on the relative distribution of author prestige in each bucket, the graph can potentially show a relationship (or lack thereof) between author prestige and distance of author's institute to the Top Ten institutions. The following numbers denote the probability that an author from each of the distance buckets have published at least once in a tier 1 conference: {prob_published_t1}"
 
@@ -195,8 +200,7 @@ class Science:
         df_tier3.drop_duplicates(subset ="pid", keep = "first", inplace = True)
         df_tier3_authors_institute_rank = df_institutes[df_institutes['pid'].isin(df_tier3.pid.unique())].drop(['affiliation', 'latitude', "longitude", "Distance to Top Ten"], axis=1)
 
-        fig, ax = plt.subplots()
-
+        fig, ax = plt.subplots(figsize=(8, 6))
 
         a_heights, a_bins = np.histogram(df_tier1_authors_institute_rank['rank'].dropna(), bins=6, range=[0, 600])
         b_heights, b_bins = np.histogram(df_tier2_authors_institute_rank['rank'].dropna(), bins=6, range=[0, 600])
@@ -218,6 +222,8 @@ class Science:
         
         ax.set_xticks(a_bins)
         plt.savefig('q3a_image.png')
+        
+        plt.clf()
 
         return "This graph shows the spread of the unique authors across different instition ranks for different tiers of venues."
 
@@ -255,8 +261,7 @@ class Science:
         df_tier3_num_pub = df_tier3.groupby(['pid']).size().reset_index(name='num_publications')
         df_tier3_publications_institute_rank = pd.merge(df_tier3_num_pub, df_institutes, left_on='pid', right_on='pid', how='left')
 
-
-        fig, ax = plt.subplots()
+        fig, ax = plt.subplots(figsize=(8, 6))
 
         a_heights, a_bins = np.histogram(df_tier1_publications_institute_rank['rank'].dropna(), bins=6, range=[0, 600])
         b_heights, b_bins = np.histogram(df_tier2_publications_institute_rank['rank'].dropna(), bins=6, range=[0, 600])
@@ -285,6 +290,8 @@ class Science:
         
         ax.set_xticks(a_bins)
         plt.savefig('q3b_image.png')
+        
+        plt.clf()
 
         return "This graph shows the spread of the publications across different instition ranks for different tiers of venues."
 
@@ -315,7 +322,7 @@ class Science:
         initial_high = np.sum(df['initial'] > high)
         
         df['Authors'] = ''
-        
+        plt.figure(figsize=(8, 6))
         sns_plot = sns.scatterplot(x="initial", y="final",size= 'Authors', data=df)
         sns_plot.set(ylabel='Final Reputation', xlabel='Initial Reputation')
         sns_plot.get_figure().savefig('q4_image.png')
@@ -327,4 +334,5 @@ class Science:
         
         result = "Of the data scientists who had an initial high reputation, " + rep_remain_high + "% continued to have a high reputation while " + rep_down + "% ended up publishing in low-tier conferences. On the other hand, of the data scientists who had an initial low reputation, " + rep_remain_low + "% did not have much of a change in their reputation while " + rep_up + "% managed to publish in high-tiered conferences."
         
+        plt.clf()
         return result
