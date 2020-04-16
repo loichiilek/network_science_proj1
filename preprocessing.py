@@ -65,7 +65,7 @@ class Network:
         conf2 = conf2.sort_values(by=['pid','year'])
         
         # getting list of conferences
-        conftierlist = self.getConferences():
+        conftierlist = self.getConferences()
         conferences = []
         for i in range(len(conftierlist)):
                 conferences.append(conftierlist[i][0])

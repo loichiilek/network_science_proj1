@@ -45,7 +45,8 @@ class Science:
                 tier_1.append(conf)
 
         # get df with each conference and its network centrality score
-        conf_df = self.get_conf_prestige()
+        conf_dict = self.network.getVenuePrestigefromNetwork()
+        conf_df = pd.DataFrame.from_dict(conf_dict, orient='index', columns=['conference', 'prestige'])
 
         # create df that will be used to count how many authors have published to tier 1 conferences
         tier1_authors_df = authors_df[authors_df.conf.isin(tier_1)].drop(columns=['name', 'year', 'conf']).drop_duplicates()
