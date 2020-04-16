@@ -1,12 +1,14 @@
 # code for GUI
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
+from PyQt5.QtGui import QPixmap
 import pyqtgraph as pg
 import sys
 import time
 
 from preprocessing import Network
 from science import Science
+
 
 class App(QMainWindow):
     def __init__(self):
@@ -23,8 +25,8 @@ class App(QMainWindow):
         # model class initialization
         # self.network = Network()
         self.check_state = []
+        self.conf_to_analyze_old = None
         self.science = Science()
-
 
         # initialize the Tabs
         self.createInputWidget()
@@ -44,33 +46,41 @@ class App(QMainWindow):
         self.show()
 
     def createGraphWidget(self):
-        self.graphWidget = pg.PlotWidget()
-        # self.setCentralWidget(self.graphWidget)
+        # self.graphWidget = pg.PlotWidget()
+        # # self.setCentralWidget(self.graphWidget)
 
-        hour = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        temperature = [30, 32, 34, 32, 33, 31, 29, 32, 35, 45]
+        # hour = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        # temperature = [30, 32, 34, 32, 33, 31, 29, 32, 35, 45]
 
-        # Add Background colour to white
-        self.graphWidget.setBackground('w')
-        # Add Title
-        self.graphWidget.setTitle("Your Title Here")
-        # Add Axis Labels
-        self.graphWidget.setLabel(
-            'left', 'Temperature (°C)', color='red', size=30)
-        self.graphWidget.setLabel('bottom', 'Hour (H)', color='red', size=30)
-        # Add legend
-        self.graphWidget.addLegend()
-        # Add grid
-        self.graphWidget.showGrid(x=True, y=True)
-        # Set Range
-        self.graphWidget.setXRange(0, 10, padding=0)
-        self.graphWidget.setYRange(20, 55, padding=0)
+        # # Add Background colour to white
+        # self.graphWidget.setBackground('w')
+        # # Add Title
+        # self.graphWidget.setTitle("Your Title Here")
+        # # Add Axis Labels
+        # self.graphWidget.setLabel(
+        #     'left', 'Temperature (°C)', color='red', size=30)
+        # self.graphWidget.setLabel('bottom', 'Hour (H)', color='red', size=30)
+        # # Add legend
+        # self.graphWidget.addLegend()
+        # # Add grid
+        # self.graphWidget.showGrid(x=True, y=True)
+        # # Set Range
+        # self.graphWidget.setXRange(0, 10, padding=0)
+        # self.graphWidget.setYRange(20, 55, padding=0)
 
-        pen = pg.mkPen(color=(255, 0, 0))
-        self.graphWidget.plot(hour, temperature, name="Sensor 1",
-                              pen=pen, symbol='+', symbolSize=30, symbolBrush=('b'))
+        # pen = pg.mkPen(color=(255, 0, 0))
+        # self.graphWidget.plot(hour, temperature, name="Sensor 1",
+        #                       pen=pen, symbol='+', symbolSize=30, symbolBrush=('b'))
+        self.graph_widget_layout = QVBoxLayout()
+        self.graph_pic_label = QLabel()
+        self.graph_text_label = QLabel()
+        self.graph_text_label.setWordWrap(True)
+        self.graph_widget_layout.addWidget(self.graph_pic_label)
+        self.graph_widget_layout.addWidget(self.graph_text_label)
+       # create dummy widget to put into Tab widget
+        self.graphWidget = QWidget()
+        self.graphWidget.setLayout(self.graph_widget_layout)
 
-  
     def createInputWidget(self):
         self.input_widget_layout = QHBoxLayout()
         # Set Label
@@ -94,10 +104,9 @@ class App(QMainWindow):
         #   self.add_conf_button.clicked.connect(self.addConfOnClicked)
 
         self.updateCheckboxes()
-        
+
         self.checkAllCheckboxes()
         # self.input_grid_layout.addWidget(self.add_conf_button,len(self.conf_check_box)+1,0,1,2)
-
 
         # Create questions dropdown list
         self.input_groupbox2 = QGroupBox("Questions to Analyze")
@@ -110,19 +119,18 @@ class App(QMainWindow):
         for j, qn in enumerate(qn_list):
             self.input_qn_combo.addItem(qn)
 
-        self.input_qn_box_layout.addWidget(self.input_qn_combo, alignment=Qt.AlignBottom)
-
+        self.input_qn_box_layout.addWidget(
+            self.input_qn_combo, alignment=Qt.AlignBottom)
 
         # Add Run Button
         self.run_button = QPushButton("Run Analysis")
         self.run_button.clicked.connect(self.runOnClicked)
-        self.input_qn_box_layout.addWidget(self.run_button, alignment=Qt.AlignBottom)
-
+        self.input_qn_box_layout.addWidget(
+            self.run_button, alignment=Qt.AlignBottom)
 
         # create dummy widget to put into Tab widget
         self.inputWidget = QWidget()
         self.inputWidget.setLayout(self.input_widget_layout)
-      
 
     def updateCheckboxes(self):
         conf_list = self.science.network.getConferences()
@@ -131,7 +139,7 @@ class App(QMainWindow):
 
         # reset layout so that the new checklists can be shown
         for i in reversed(range(self.input_grid_layout.count())):
-          self.input_grid_layout.itemAt(i).widget().deleteLater()
+            self.input_grid_layout.itemAt(i).widget().deleteLater()
 
         for i, conf in enumerate(conf_list):
             self.conf_check_box[i] = QCheckBox(conf[0].upper())
@@ -139,7 +147,8 @@ class App(QMainWindow):
 
             # set checked or unchecked based on check_state
             if conf in [c[0] for c in self.check_state]:
-                self.conf_check_box[i].setChecked([c[1] for c in self.check_state if c[0]==conf][0])
+                self.conf_check_box[i].setChecked(
+                    [c[1] for c in self.check_state if c[0] == conf][0])
 
             self.input_grid_layout.addWidget(self.conf_check_box[i], i + 1, 0)
             self.input_grid_layout.addWidget(self.conf_label[i], i + 1, 1)
@@ -153,32 +162,31 @@ class App(QMainWindow):
         # update add conf button that gets deleted
         self.add_conf_button = QPushButton("Add New Conf")
         self.add_conf_button.clicked.connect(self.addConfOnClicked)
-        self.input_grid_layout.addWidget(self.add_conf_button, len(self.conf_check_box) + 1, 0, 1, 2)
-        
+        self.input_grid_layout.addWidget(
+            self.add_conf_button, len(self.conf_check_box) + 1, 0, 1, 2)
+
         # update remove conf button that gets deleted
         self.remove_conf_button = QPushButton("Remove Existing Conf")
         self.remove_conf_button.clicked.connect(self.removeConfOnClicked)
-        self.input_grid_layout.addWidget(self.remove_conf_button, len(self.conf_check_box) + 2, 0, 1, 2)
-
+        self.input_grid_layout.addWidget(
+            self.remove_conf_button, len(self.conf_check_box) + 2, 0, 1, 2)
 
     def checkAllCheckboxes(self):
         for cb in self.conf_check_box:
             cb.setChecked(True)
 
-
     def uncheckAllCheckboxes(self):
         for cb in self.conf_check_box:
             cb.setChecked(False)
-
 
     def rememberCheckState(self):
         conf_list = self.science.network.getConferences()
         self.check_state = [i for i in range(len(self.conf_check_box))]
         for i in range(len(self.conf_check_box)):
-            self.check_state[i] = (conf_list[i],self.conf_check_box[i].isChecked())
+            self.check_state[i] = (
+                conf_list[i], self.conf_check_box[i].isChecked())
 
-    
-    def addConfOnClicked(self,to_add):
+    def addConfOnClicked(self, to_add):
         self.createConfDialogue()
 
     def removeConfOnClicked(self, to_rem):
@@ -189,10 +197,10 @@ class App(QMainWindow):
         self.dial_widget.windowTitle = 'Add'
         self.dial_widget.setObjectName('Add')
         self.dial_widget.setWindowFlags(Qt.Window | Qt.Popup)
-        
+
         # move to approximately center
         self.dial_widget.move(self.mapToGlobal(self.rect().center()) - QPoint(
-          self.dial_widget.width()/4, self.dial_widget.height()/4))
+            self.dial_widget.width()/4, self.dial_widget.height()/4))
         label1 = QLabel("Conference Name")
         label2 = QLabel("Tier:")
         self.name_line_edit = QLineEdit()
@@ -216,17 +224,15 @@ class App(QMainWindow):
 
         dial_layout = QGridLayout()
         dial_layout.addWidget(label1, 0, 0)
-        dial_layout.addWidget(self.name_line_edit, 0, 1,1,2)
+        dial_layout.addWidget(self.name_line_edit, 0, 1, 1, 2)
         dial_layout.addWidget(label2, 1, 0)
-        dial_layout.addWidget(self.tier_line_edit, 1, 1,1,2)
+        dial_layout.addWidget(self.tier_line_edit, 1, 1, 1, 2)
         dial_layout.addWidget(self.confirm_add_button, 2, 2)
         dial_layout.addWidget(self.close_add_button, 2, 1)
 
         # dial_layout.setColumnMinimumWidth(1, 200)
         self.dial_widget.setLayout(dial_layout)
         self.dial_widget.show()
-
-
 
     def removeConfDialogue(self):
         self.rem_widget = QWidget()
@@ -260,32 +266,46 @@ class App(QMainWindow):
 
         self.rem_widget.setLayout(rem_layout)
         self.rem_widget.show()
-      
 
     def runOnClicked(self):
-        checked = [ind for ind, cb in enumerate(self.conf_check_box) if cb.isChecked()]
+        checked = [ind for ind, cb in enumerate(
+            self.conf_check_box) if cb.isChecked()]
         # print(checked)
         # print([self.science.network.getConferences()[i] for i in checked])
-        conf_list_names = [self.science.network.getConferences()[i][0] for i in checked]
-        conf_list = [self.science.network.getConferences()[i] for i in checked]
-        self.science.network.getPublications(conf_list_names)
-                      
+        self.conf_to_analyze_new = [self.science.network.getConferences()[i][0]
+                                    for i in checked]
+        # code to make sure won't rerun all the time
+        if self.conf_to_analyze_new != self.conf_to_analyze_old:
+            self.science.network.getPublications(self.conf_to_analyze_new)
+        self.conf_to_analyze_old = self.conf_to_analyze_new
+
         question = self.input_qn_combo.currentIndex()
+        conf_list = [self.science.network.getConferences()[i] for i in checked]
 
         if question == 0:
-            self.science.question1(conf_list)
+            text_result = self.science.question1(conf_list)
+            pic_result = 'q1_image.png'
         if question == 1:
-            res = self.science.question2(conf_list)
-            print(res)
+            text_result = self.science.question2(conf_list)
+            pic_result = 'q2_image.png'
+            print(text_result)
         if question == 2:
-            res = self.science.question3a(conf_list)
-            print(res)
+            text_result = self.science.question3a(conf_list)
+            pic_result = 'q3_image.png'
+            print(text_result)
         if question == 3:
-            self.science.question4(conf_list)
+            text_result = self.science.question4(conf_list)
+            pic_result = 'q4_image.png'
+        self.createAnalysis(pic_result, text_result)
+        # display the PICTURE and TEXT
 
-        # display the PICTURE and TEXT  
-      
         self.tab_widget.setCurrentIndex(1)
+
+    def createAnalysis(self, pic, text):
+        pixmap = QPixmap(pic)
+        pixmap_resized = pixmap.scaled(600, 400, Qt.KeepAspectRatio)
+        self.graph_pic_label.setPixmap(pixmap_resized)
+        self.graph_text_label.setText(text)
 
 
 def main():
