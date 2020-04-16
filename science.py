@@ -17,6 +17,18 @@ class Science:
     def question1(self, conferences):
         # Network Science Measures that Reflect Prestige of Venues/Authors
         # conferences comes in the form of [['sigmod','1'],...]
+        prestige = self.network.getVenuePrestigefromNetwork()
+        conference = []
+        eigenvector_centrality = []
+        
+        for key,value in prestige.items():
+            conference.append(key)
+            eigenvector_centrality.append(value)
+        d = {'conference': conference, 'eigenvector_centrality': eigenvector_centrality}
+        df =  pd.DataFrame.from_dict(d)
+        df = df.sort_values('eigenvector_centrality', ascending = False)
+        ax = sns.barplot(x="eigenvector_centrality", y="conference", data=df, palette="Blues_d" )
+        
         pass
 
     def question2(self, conferences):
