@@ -81,8 +81,7 @@ class Science:
             total = len(df[df.distance_tier == iqr])
             prob_published_t1.append(t1 / total)
 
-        # TODO need to return a string that details my analysis.
-        return 'Q2 analysis: 420blazeit'
+        return f"This graph shows the relationship between the distance of an author's institute to one of the Top Ten institutes, and the author's prestige. The authors are split into 4 buckets based on the distance. The buckets correspond to the quartiles of the distribution of the available distances. Based on the relative distribution of author prestige in each bucket, the graph can potentially show a relationship (or lack thereof) between author prestige and distance of author's institute to the Top Ten institutions. The following numbers denote the probability that an author from each of the distance buckets have published at least once in a tier 1 conference: {prob_published_t1}"
 
     def question3a(self, conferences):
         
