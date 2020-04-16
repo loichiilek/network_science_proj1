@@ -21,6 +21,7 @@ class Network:
     ]
 
     self.publications_api = PublicationsAPI()
+    self.network_graph = self.drawDiWeightedNetwork()
 
 
   def getConferences(self):
@@ -56,21 +57,42 @@ class Network:
   def setQuestions(self, new_quest):
     self.questions = new_quest
 
-  def drawNetwork(self):
+  def drawDiWeightedNetwork(self):
     conf = pd.read_csv ('authors.csv')
-    G=nx.DiGraph()
+    G=nx.MultiDiGraph()
 
     conf2 = conf.drop_duplicates()
     conf2 = conf2.sort_values(by=['pid','year'])
-
+    
+    # getting list of conferences
+    conftierlist = self.getConferences():
+    conferences = []
+    for i in range(len(conftierlist)):
+        conferences.append(conftierlist[i][0])
+    
     # adding nodes:
-    G.add_nodes_from(self.getConferences())
+    G.add_nodes_from(conferences)
 
     for i in range(len(conf2.index)-1):
-        if conf2['pid'].iloc[i] == conf2['pid'].iloc[i+1]:
+        if (conf2['pid'].iloc[i] == conf2['pid'].iloc[i+1]) and (conf2['conf'].iloc[i] != conf2['conf'].iloc[i+1]):
             G.add_edge(conf2['conf'].iloc[i+1], conf2['conf'].iloc[i])
-
-    nx.draw(G, with_labels = True)
+            
+    G2 = nx.DiGraph()
+    G2.add_nodes_from(conferences)
+    
+    for i in range(len(conferences)):
+        for j in range(len(conferences)):
+            if G.number_of_edges(conferences[i],conferences[j])>0:
+                G2.add_edge(conferences[i],conferences[j],weight=G.number_of_edges(conferences[i],conferences[j]))
+    
+    return G2
+  
+  # Returns a dict oof ["sigmod":0.4, ...]
+  def getVenuePrestigefromNetwork(self):
+    prestige = nx.eigenvector_centrality(self.network_graph, weight= 'weight')
+    
+    return prestige
+                
   
   def getPublications(self,conf_list):
     print('getting publications')
