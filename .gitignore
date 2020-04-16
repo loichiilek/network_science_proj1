@@ -1,5 +1,10 @@
 widgets_example.py
 __pycache__
 authors.csv
+<<<<<<< HEAD
 
 configurations.txt
+=======
+Untitled.ipynb
+.ipynb_checkpoints/*
+>>>>>>> be84b9db4d85e18017f6f6cbf573fcfc4642b47a

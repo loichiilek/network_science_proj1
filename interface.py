@@ -275,9 +275,11 @@ class App(QMainWindow):
         if question == 0:
             self.science.question1(conf_list)
         if question == 1:
-            self.science.question2(conf_list)
+            res = self.science.question2(conf_list)
+            print(res)
         if question == 2:
-            self.science.question3(conf_list)
+            res = self.science.question3a(conf_list)
+            print(res)
         if question == 3:
             self.science.question4(conf_list)
 
