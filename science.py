@@ -89,7 +89,7 @@ class Science:
         
         string = "Using eigenvector centrality, the network graph has a" + accuracy + "as compared to the given tierlist."
         
-        return 
+        return string
 
     def question2(self, conferences):
         # Location of Scientist's Institute vs Success of Scientist
@@ -313,6 +313,12 @@ class Science:
         
         initial_low = np.sum(df['initial'] < low)
         initial_high = np.sum(df['initial'] > high)
+        
+        df['Authors'] = ''
+        
+        sns_plot = sns.scatterplot(x="initial", y="final",size= 'Authors', data=df)
+        sns_plot.set(ylabel='Final Reputation', xlabel='Initial Reputation')
+        sns_plot.get_figure().savefig('q4_image.png')
         
         rep_remain_high = str(round(maintainhigh/initial_high*100, 2))
         rep_remain_low = str(round(maintainlow/initial_low*100, 2))
