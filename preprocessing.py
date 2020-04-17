@@ -75,7 +75,7 @@ class Network:
 
         for i in range(len(conf2.index)-1):
             for j in range(5):
-                if i+j+1 < len(conf.index)-1:
+                if i+j+1 < len(conf2.index)-1:
                     if (conf2['pid'].iloc[i] == conf2['pid'].iloc[i+j+1]) and (conf2['conf'].iloc[i] != conf2['conf'].iloc[i+j+ 1]):
                         G.add_edge(conf2['conf'].iloc[i], conf2['conf'].iloc[i+j+1])
 

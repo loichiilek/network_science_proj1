@@ -13,17 +13,12 @@ from science import Science
 class App(QMainWindow):
     def __init__(self):
         super(App, self).__init__()
+
         # configure App
         self.title = 'CZ4071 Project 1'
-        # self.left = 100
-        # self.top = 100
-        # self.width = 600
-        # self.height = 600
         self.setWindowTitle(self.title)
-        # self.setGeometry(self.left, self.top, self.width, self.height)
 
         # model class initialization
-        # self.network = Network()
         self.check_state = []
         self.conf_to_analyze_old = None
         self.science = Science()
@@ -37,13 +32,10 @@ class App(QMainWindow):
         self.tab_widget.addTab(self.input_widget, "Input")
         self.tab_widget.addTab(self.analysis_widget, "Analysis")
 
-        # set Grid
-        # layout = QGridLayout()
-        # layout.addWidget(self.tab_widget, 0, 0)
-
         self.setCentralWidget(self.tab_widget)
 
         self.show()
+
 
     def createAnalysisWidget(self):
 
@@ -54,19 +46,14 @@ class App(QMainWindow):
         self.graph_text_label.setWordWrap(True)
         self.graph_widget_layout.addWidget(self.graph_pic_label)
         self.graph_widget_layout.addWidget(self.graph_text_label)
+
        # create dummy widget to put into Tab widget
         self.analysis_widget = QWidget()
         self.analysis_widget.setLayout(self.graph_widget_layout)
 
+
     def createInputWidget(self):
         self.input_widget_layout = QHBoxLayout()
-        # Set Label
-        # label = QLabel('Conferences to Include')
-        # label.setFixedSize(200, 20)
-        # font = label.font()
-        # font.setBold(True)
-        # label.setFont(font)
-        # self.self.input_widget_layout.addWidget(label, 0, 0)
 
         # Create conferences Checkboxes
         self.input_groupbox1 = QGroupBox("Conferences to Include")
@@ -76,14 +63,8 @@ class App(QMainWindow):
         self.input_grid_layout = QGridLayout()
         self.input_groupbox1.setLayout(self.input_grid_layout)
 
-        #  # Add Conferences Button
-        #   self.add_conf_button = QPushButton("Add Conf")
-        #   self.add_conf_button.clicked.connect(self.addConfOnClicked)
-
         self.updateCheckboxes()
 
-        # self.checkAllCheckboxes()
-        # self.input_grid_layout.addWidget(self.add_conf_button,len(self.conf_check_box)+1,0,1,2)
 
         # Create questions dropdown list
         self.input_groupbox2 = QGroupBox("Questions to Analyze")
@@ -109,19 +90,22 @@ class App(QMainWindow):
         self.input_widget = QWidget()
         self.input_widget.setLayout(self.input_widget_layout)
 
+
     def updateCheckboxes(self):
         conf_list = self.science.network.getConferences()
         self.conf_check_box = [i for i in range(len(conf_list))]
         self.conf_label = [i for i in range(len(conf_list))]
+
         # reset layout so that the new checklists can be shown
         for i in reversed(range(self.input_grid_layout.count())):
             self.input_grid_layout.itemAt(i).widget().deleteLater()
 
+        # add toggle all checkboxes button
         self.toggle_checkbox  = QCheckBox('Toggle')
         self.toggle_checkbox.clicked.connect(self.toggleCheckbox)
         self.input_grid_layout.addWidget(self.toggle_checkbox, 0, 0)
 
-
+        # add all the checkboxes
         for i, conf in enumerate(conf_list):
             self.conf_check_box[i] = QCheckBox(conf[0].upper())
             self.conf_label[i] = QLabel('Tier ' + str(conf[1]))
@@ -163,19 +147,24 @@ class App(QMainWindow):
 
 
     def rememberCheckState(self):
+        # remember the checkboxes state everytime the list is changed
         conf_list = self.science.network.getConferences()
         self.check_state = [i for i in range(len(self.conf_check_box))]
         for i in range(len(self.conf_check_box)):
             self.check_state[i] = (
                 conf_list[i], self.conf_check_box[i].isChecked())
 
+
     def addConfOnClicked(self, to_add):
         self.createConfDialogue()
+
 
     def removeConfOnClicked(self, to_rem):
         self.removeConfDialogue()
 
+
     def createConfDialogue(self):
+        # Create the add Conf dialogue box
         self.dial_widget = QWidget()
         self.dial_widget.windowTitle = 'Add'
         self.dial_widget.setObjectName('Add')
@@ -192,7 +181,6 @@ class App(QMainWindow):
         self.close_add_button = QPushButton('Cancel')
 
         def confOnConfirm():
-            # write to conference file
             self.science.network.addConference(
                 [self.name_line_edit.text(), self.tier_line_edit.text()])
             self.dial_widget.close()
@@ -202,9 +190,11 @@ class App(QMainWindow):
         def confOnClose():
             self.dial_widget.close()
 
+        # Add button handlers
         self.confirm_add_button.clicked.connect(confOnConfirm)
         self.close_add_button.clicked.connect(confOnClose)
 
+        # add all the layouts
         dial_layout = QGridLayout()
         dial_layout.addWidget(label1, 0, 0)
         dial_layout.addWidget(self.name_line_edit, 0, 1, 1, 2)
@@ -213,11 +203,12 @@ class App(QMainWindow):
         dial_layout.addWidget(self.confirm_add_button, 2, 2)
         dial_layout.addWidget(self.close_add_button, 2, 1)
 
-        # dial_layout.setColumnMinimumWidth(1, 200)
         self.dial_widget.setLayout(dial_layout)
         self.dial_widget.show()
 
+
     def removeConfDialogue(self):
+        # Create the remove Conf dialogue box
         self.rem_widget = QWidget()
         self.rem_widget.setWindowFlags(Qt.Window | Qt.Popup)
 
@@ -225,6 +216,8 @@ class App(QMainWindow):
         self.rem_widget.move(self.mapToGlobal(self.rect().center()) - QPoint(
             self.rem_widget.width()/4, self.rem_widget.height()/4))
         label1 = QLabel("Conference to Delete")
+        
+        # add buttons
         self.remove_line_edit = QLineEdit()
         self.confirm_remove_button = QPushButton('Remove')
         self.close_remove_button = QPushButton('Cancel')
@@ -238,9 +231,11 @@ class App(QMainWindow):
         def remOnClose():
             self.rem_widget.close()
 
+        # add button handlers
         self.confirm_remove_button.clicked.connect(remOnConfirm)
         self.close_remove_button.clicked.connect(remOnClose)
 
+        # add everything to layout
         rem_layout = QGridLayout()
         rem_layout.addWidget(label1, 0, 0)
         rem_layout.addWidget(self.remove_line_edit, 0, 1, 1, 2)
@@ -250,22 +245,26 @@ class App(QMainWindow):
         self.rem_widget.setLayout(rem_layout)
         self.rem_widget.show()
 
+
     def runOnClicked(self):
+        # get the checked checkboxes
         checked = [ind for ind, cb in enumerate(
             self.conf_check_box) if cb.isChecked()]
-        # print(checked)
-        # print([self.science.network.getConferences()[i] for i in checked])
+
         self.conf_to_analyze_new = [self.science.network.getConferences()[i][0]
                                     for i in checked]
+
         # code to make sure won't rerun all the time
         if self.conf_to_analyze_new != self.conf_to_analyze_old:
             print("conference list changed, getting conferences from DBLP....")
             self.science.network.getPublications(self.conf_to_analyze_new)
         self.conf_to_analyze_old = self.conf_to_analyze_new
 
+        # get question from UI
         question = self.input_qn_combo.currentIndex()
         conf_list = [self.science.network.getConferences()[i] for i in checked]
 
+        # run processing
         if question == 0:
             text_result = self.science.question1(conf_list)
             pic_result = 'q1_image.png'
@@ -284,12 +283,14 @@ class App(QMainWindow):
 
         # display the PICTURE and TEXT
         self.createAnalysis(pic_result, text_result)
+
         # change to the analysis tab
         self.tab_widget.setCurrentIndex(1)
 
+
     def createAnalysis(self, pic, text):
+        # update the analysis tab with the analysis picture and text
         pixmap = QPixmap(pic)
-        # pixmap_resized = pixmap.scaled(600, 400, Qt.KeepAspectRatio)
         self.graph_pic_label.setPixmap(pixmap)
         self.graph_text_label.setText(text)
 
