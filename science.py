@@ -57,6 +57,7 @@ class Science:
             else:
                 bar.set_color(current_palette[2])
 
+        sns_plot.set_title('Eigenvector Centrality of Conferences (Ordered)')
         sns_plot.get_figure().savefig('q1_image.png')
         
         # extra analysis: accuracy of new tierlist
@@ -67,10 +68,14 @@ class Science:
                 newtierlist[df['conference'].iloc[i]] = '1'
                 count2 += 1
             elif count < tier[0]+tier[1]:
-                newtierlist[df['conference'].iloc[i]] = '2'
+                newtierlist[df['conference'].iloc[i]] = '2'  
                 count2 += 1
             else:
                 newtierlist[df['conference'].iloc[i]] = '3'
+                count2 += 1
+                
+        
+        
 
         tldict = {}
         for i in conferences:
@@ -320,6 +325,7 @@ class Science:
         plt.figure(figsize=(8, 6))
         sns_plot = sns.scatterplot(x="initial", y="final",size= 'Authors', data=df)
         sns_plot.set(ylabel='Final Reputation', xlabel='Initial Reputation')
+        sns_plot.set_title('Scatterplot of authors\' Initial Reputation to Final Reputation')
         sns_plot.get_figure().savefig('q4_image.png')
         
         rep_remain_high = str(round(maintainhigh/initial_high*100, 2))
