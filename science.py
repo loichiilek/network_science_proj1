@@ -21,9 +21,10 @@ class Science:
         conference = []
         eigenvector_centrality = []
         
-        for key,value in prestige.items():
-            conference.append(key)
-            eigenvector_centrality.append(value)
+        for key, value in prestige.items():
+            if key in [x[0] for x in conferences]:
+                conference.append(key)
+                eigenvector_centrality.append(value)
         d = {'conference': conference, 'eigenvector_centrality': eigenvector_centrality}
         df =  pd.DataFrame.from_dict(d)
         df = df.sort_values('eigenvector_centrality', ascending = False)

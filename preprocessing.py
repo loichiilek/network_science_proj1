@@ -23,7 +23,6 @@ class Network:
         ]
 
         self.publications_api = PublicationsAPI()
-        self.network_graph = self.drawDiWeightedNetwork()
 
     def getConferences(self):
         f = open('config.txt', 'r')
@@ -92,10 +91,11 @@ class Network:
 
     # Returns a dict of {"sigmod":0.4, ...}
     def getVenuePrestigefromNetwork(self):
-        prestige = nx.eigenvector_centrality(
+        self.network_graph = self.drawDiWeightedNetwork()
+        self.prestige = nx.eigenvector_centrality_numpy(
             self.network_graph, weight='weight')
 
-        return prestige
+        return self.prestige
 
     def getPublications(self, conf_list):
         print('getting publications')
@@ -103,23 +103,23 @@ class Network:
     
     
     def get_authors_rep(self):
+        self.getVenuePrestigefromNetwork()
         conf = pd.read_csv ('authors.csv')
         conf = conf.sort_values(by=['pid','year'])
         uniquepid = conf['pid'].unique()
 
-        reppid = []
-        for i in range(len(uniquepid)):
-            if len(conf[conf.pid == uniquepid[i]]) >= 10:
-                reppid.append(uniquepid[i])
+        confcount = conf['pid'].value_counts()
+        confcount = confcount.to_frame()
+        confcount = confcount[confcount['pid']>=10]
 
         rep = []
-        for i in range(len(reppid)):
-            tempconf = conf[conf.pid == reppid[i]]
+        for i in range(len(confcount)):
+            tempconf = conf[conf.pid == confcount.index[i]]
             first = 0
             last = 0
             for i in range(5):
-                first += prestige[tempconf.iloc[i].conf]
-                last += prestige[tempconf.iloc[i-5].conf]
+                first += self.prestige[tempconf.iloc[i].conf]
+                last += self.prestige[tempconf.iloc[i-5].conf]
             rep.append([ first/5, last/5])
 
         df2 = pd.DataFrame(rep, columns = ["initial", "final"])
@@ -214,6 +214,9 @@ class PublicationsAPI:
             fc.writerows(authors_list)
 
     def create_csv(self, conf_list):
+        # Remove file if it already exists
+        if os.path.isfile('authors.csv'):
+            os.remove("authors.csv")
         beginning = time.time()
         for conf in conf_list:
             start = time.time()
