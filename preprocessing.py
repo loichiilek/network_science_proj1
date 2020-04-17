@@ -74,8 +74,10 @@ class Network:
         G.add_nodes_from(conferences)
 
         for i in range(len(conf2.index)-1):
-            if (conf2['pid'].iloc[i] == conf2['pid'].iloc[i+1]) and (conf2['conf'].iloc[i] != conf2['conf'].iloc[i+1]):
-                G.add_edge(conf2['conf'].iloc[i+1], conf2['conf'].iloc[i])
+            for j in range(5):
+                if i+j+1 < len(conf.index)-1:
+                    if (conf2['pid'].iloc[i] == conf2['pid'].iloc[i+j+1]) and (conf2['conf'].iloc[i] != conf2['conf'].iloc[i+j+ 1]):
+                        G.add_edge(conf2['conf'].iloc[i], conf2['conf'].iloc[i+j+1])
 
         G2 = nx.DiGraph()
         G2.add_nodes_from(conferences)
@@ -102,16 +104,17 @@ class Network:
     
     def get_authors_rep(self):
         conf = pd.read_csv ('authors.csv')
+        conf = conf.sort_values(by=['pid','year'])
         uniquepid = conf['pid'].unique()
 
         reppid = []
         for i in range(len(uniquepid)):
-            if len(conf2[conf2.pid == uniquepid[i]]) >= 10:
+            if len(conf[conf.pid == uniquepid[i]]) >= 10:
                 reppid.append(uniquepid[i])
 
         rep = []
         for i in range(len(reppid)):
-            tempconf = conf2[conf2.pid == reppid[i]]
+            tempconf = conf[conf.pid == reppid[i]]
             first = 0
             last = 0
             for i in range(5):
