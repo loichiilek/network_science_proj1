@@ -131,13 +131,16 @@ class App(QMainWindow):
         self.input_grid_layout.addWidget(
             self.remove_conf_button, len(self.conf_check_box) + 2, 0, 1, 2)
 
+
     def checkAllCheckboxes(self):
         for cb in self.conf_check_box:
             cb.setChecked(True)
 
+
     def uncheckAllCheckboxes(self):
         for cb in self.conf_check_box:
             cb.setChecked(False)
+
 
     def toggleCheckbox(self):
         if self.toggle_checkbox.isChecked():

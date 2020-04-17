@@ -5,6 +5,9 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import matplotlib
 import numpy as np
+import warnings
+warnings.filterwarnings("ignore")
+np.seterr(all='ignore')
 matplotlib.use('agg')
 sns.set()
 
@@ -99,7 +102,7 @@ class Science:
         # conferences comes in the form of [['sigmod','1'],...]
         
         # ideally check if authors.csv exist already.
-        authors_df = pd.read_csv('authors.csv')
+        authors_df = pd.read_csv('authors.csv',low_memory=False)
 
         # list of tier 1 conferences
         tier_1 = []
@@ -127,7 +130,7 @@ class Science:
 
         del temp_df
 
-        locations_df = pd.read_csv('author_aff_rank_distance.csv')
+        locations_df = pd.read_csv('author_aff_rank_distance.csv', low_memory=False)
         joined = authors_df.set_index('pid').join(locations_df.set_index('pid'))
 
         del authors_df, locations_df
