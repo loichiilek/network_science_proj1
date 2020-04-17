@@ -29,13 +29,6 @@ class Science:
         df = df.sort_values('eigenvector_centrality', ascending = False)
         
         
-        
-        # Barplot
-        plt.figure(figsize=(8, 6))
-        sns_plot = sns.barplot(x="eigenvector_centrality", y="conference", data=df, palette="Blues_d")
-        sns_plot.set(ylabel='Conference', xlabel='Eigenvector Centrality')
-        sns_plot.get_figure().savefig('q1_image.png')
-        
         tier = [0,0,0]
 
         for i in conferences:
@@ -48,7 +41,9 @@ class Science:
 
         count = 0
         newtierlist = []
-
+        
+        #barplot 
+        plt.figure(figsize=(8, 6))
         current_palette = sns.color_palette()        
         sns_plot = sns.barplot(x="eigenvector_centrality", y="conference", data=df)
         sns_plot.set(ylabel='Conference', xlabel='Eigenvector Centrality')
