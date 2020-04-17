@@ -10,4 +10,4 @@ After the packages have been installed, run:
 
 The program dynamically generates and stores intermediate results as csv files, json files, or png in the same folder. These files can be ignored by the user.
 
-When the program is processing, sometimes the GUI shows Not Responding on Windows. This is normal for the PyQt interface. Please do not close the program but allow it to run to completion. The fetching of the DBLP API takes approximately 2 minutes. Also, Question 4 in particular may take 30 minutes to process.
+When the program is processing, sometimes the GUI shows Not Responding on Windows. This is normal for the PyQt interface. Please do not close the program but allow it to run to completion. The fetching of the DBLP API takes approximately 2 minutes. Also, question analysis may take up to 5 mins to run.
